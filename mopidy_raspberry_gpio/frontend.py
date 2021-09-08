@@ -79,6 +79,8 @@ class RaspberryGPIOFrontend(pykka.ThreadingActor, core.CoreListener):
 
     def dispatch_input(self, event, options):
         handler_name = f"handle_{event}"
+        logger.debug(f"Trying to dispatch current event to handler {handler_name}")
+
         try:
             getattr(self, handler_name)(options)
         except AttributeError:
@@ -87,21 +89,25 @@ class RaspberryGPIOFrontend(pykka.ThreadingActor, core.CoreListener):
             )
 
     def handle_play_pause(self, config):
+        logger.debug(f"handling play/pause")
         if self.core.playback.get_state().get() == core.PlaybackState.PLAYING:
             self.core.playback.pause()
         else:
             self.core.playback.play()
 
     def handle_play_stop(self, config):
+        logger.debug(f"handling play/stop")
         if self.core.playback.get_state().get() == core.PlaybackState.PLAYING:
             self.core.playback.stop()
         else:
             self.core.playback.play()
 
     def handle_next(self, config):
+        logger.debug(f"handling next")
         self.core.playback.next()
 
     def handle_prev(self, config):
+        logger.debug(f"handling prev")
         self.core.playback.previous()
 
     def handle_volume_up(self, config):
@@ -109,6 +115,8 @@ class RaspberryGPIOFrontend(pykka.ThreadingActor, core.CoreListener):
         volume = self.core.mixer.get_volume().get()
         volume += step
         volume = min(volume, 100)
+
+        logger.debug(f"setting volume up to {volume}")
         self.core.mixer.set_volume(volume)
 
     def handle_volume_down(self, config):
@@ -116,4 +124,6 @@ class RaspberryGPIOFrontend(pykka.ThreadingActor, core.CoreListener):
         volume = self.core.mixer.get_volume().get()
         volume -= step
         volume = max(volume, 0)
+
+        logger.debug(f"setting volume down to {volume}")
         self.core.mixer.set_volume(volume)
