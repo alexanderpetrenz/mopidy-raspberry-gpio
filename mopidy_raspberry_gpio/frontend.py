@@ -117,8 +117,7 @@ class RaspberryGPIOFrontend(pykka.ThreadingActor, core.CoreListener):
         volume = min(volume, 100)
 
         logger.debug(f"setting volume up to {volume}")
-        success = self.core.mixer.set_volume(volume)
-        logger.debug(f"setting volume successful: {success}")
+        self.core.mixer.set_volume(volume)
 
     def handle_volume_down(self, config):
         step = int(config.get("step", 5))
@@ -127,6 +126,4 @@ class RaspberryGPIOFrontend(pykka.ThreadingActor, core.CoreListener):
         volume = max(volume, 0)
 
         logger.debug(f"setting volume down to {volume}")
-        success = self.core.mixer.set_volume(volume)
-        logger.debug(f"setting volume successful: {success}")
-
+        self.core.mixer.set_volume(volume)
