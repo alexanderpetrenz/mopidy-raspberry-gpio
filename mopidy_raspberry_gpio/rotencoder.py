@@ -23,8 +23,10 @@ class RotEncoder:
     def add_pin(self, pin, event):
         if len(self.pins) == 2:
             raise RuntimeError(f"Too many pins for rotary encoder {self.id}!")
+
         self.pins.append(pin)
         self.events.append(event)
+        logger.debug(f"Encoder{self.id}: Registered pin {pin}, event {event}")
 
     def get_state(self):
         import RPi.GPIO as GPIO
@@ -41,11 +43,16 @@ class RotEncoder:
         next_state = self.get_state()
 
         event = None
+
+        logger.debug(f"current state {self.state}")
+        logger.debug(f"next state {next_state}")
+
         try:
             direction = self.get_direction(self.state, next_state)
             event = self.events[direction]
+            logger.debug(f"retrieved direction {direction}, event {event}")
         except KeyError:
-            pass
+            logger.debug("KeyError occurred on retrieving direction and/or event")
 
         self.state = next_state
         return event
