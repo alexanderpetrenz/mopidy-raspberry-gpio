@@ -112,7 +112,7 @@ class RaspberryGPIOFrontend(pykka.ThreadingActor, core.CoreListener):
 
     def handle_volume_up(self, config):
         step = int(config.get("step", 5))
-        volume = self.core.mixer.get_volume()
+        volume = self.core.mixer.get_volume().get()
         volume += step
         volume = min(volume, 100)
 
@@ -121,7 +121,7 @@ class RaspberryGPIOFrontend(pykka.ThreadingActor, core.CoreListener):
 
     def handle_volume_down(self, config):
         step = int(config.get("step", 5))
-        volume = self.core.mixer.get_volume()
+        volume = self.core.mixer.get_volume().get()
         volume -= step
         volume = max(volume, 0)
 
